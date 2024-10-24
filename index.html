@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Photo Collage Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { margin: 20px; }
+        canvas { border: 1px solid black; }
+        input[type="file"] { margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dynamic Photo Collage Generator</h1>
+
+    <!-- Upload Image -->
+    <label for="imageUpload">Upload 2x2 Image:</label>
+    <input type="file" id="imageUpload" accept="image/*"><br>
+
+    <!-- Select Paper Size -->
+    <label for="paperSize">Select Paper Size:</label>
+    <select id="paperSize">
+        <option value="A4">A4 (210mm x 297mm)</option>
+        <option value="Letter">Letter (8.5in x 11in)</option>
+        <option value="Legal">Legal (8.5in x 14in)</option>
+    </select><br>
+
+    <!-- Display Canvas -->
+    <canvas id="collageCanvas" width="210mm" height="297mm"></canvas><br>
+
+    <button id="generateCollage">Generate Collage</button>
+</div>
+
+<script>
+    const imageUpload = document.getElementById('imageUpload');
+    const paperSizeSelect = document.getElementById('paperSize');
+    const canvas = document.getElementById('collageCanvas');
+    const ctx = canvas.getContext('2d');
+    const generateCollageButton = document.getElementById('generateCollage');
+
+    let uploadedImage = null;
+
+    // Paper dimensions in pixels (assuming 300 DPI resolution)
+    const paperDimensions = {
+        A4: { width: 2480, height: 3508 },  // 210mm x 297mm
+        Letter: { width: 2550, height: 3300 }, // 8.5in x 11in
+        Legal: { width: 2550, height: 4200 }  // 8.5in x 14in
+    };
+
+    // Handle image upload
+    imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function () {
+                uploadedImage = img;
+            }
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle collage generation
+    generateCollageButton.addEventListener('click', () => {
+        const selectedPaperSize = paperSizeSelect.value;
+        const paperWidth = paperDimensions[selectedPaperSize].width;
+        const paperHeight = paperDimensions[selectedPaperSize].height;
+
+        // Set canvas size according to paper
+        canvas.width = paperWidth;
+        canvas.height = paperHeight;
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (uploadedImage) {
+            const imageWidth = 600;  // Adjust to 2x2 size (e.g., 2in = 600px @ 300 DPI)
+            const imageHeight = 600;
+
+            // Calculate how many images can fit
+            const rows = Math.floor(paperHeight / imageHeight);
+            const cols = Math.floor(paperWidth / imageWidth);
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = col * imageWidth;
+                    const y = row * imageHeight;
+                    ctx.drawImage(uploadedImage, x, y, imageWidth, imageHeight);
+                }
+            }
+        } else {
+            alert('Please upload an image!');
+        }
+    });
+</script>
+
+</body>
+</html>
