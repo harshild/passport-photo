@@ -25,6 +25,7 @@ const verticalSpaceInput = document.getElementById('verticalSpace');
 const canvas = document.getElementById('collageCanvas');
 const ctx = canvas.getContext('2d');
 const generateCollageButton = document.getElementById('generateCollage');
+const downloadCollageButton = document.getElementById('downloadCollage');
 
 // Show/hide custom paper size inputs
 paperSizeSelect.addEventListener('change', () => {
@@ -98,4 +99,37 @@ generateCollageButton.addEventListener('click', () => {
     } else {
         alert('Please upload an image!');
     }
+});
+
+downloadCollageButton.addEventListener('click', () => {
+    // Check if the canvas has content
+    if (canvas.width === 0 || canvas.height === 0) {
+        alert('Please generate a collage first!');
+        return;
+    }
+
+    // Create an offscreen canvas to manipulate
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+
+    const offscreenCtx = offscreenCanvas.getContext('2d');
+
+    // Fill the offscreen canvas with white background
+    offscreenCtx.fillStyle = 'white';
+    offscreenCtx.fillRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+    // Draw the existing canvas content on top of the white background
+    offscreenCtx.drawImage(canvas, 0, 0);
+
+    // Convert the offscreen canvas to a JPEG data URL
+    const dataURL = offscreenCanvas.toDataURL('image/jpeg', 1.0); // The second parameter is quality (1.0 is highest)
+
+    // Create an invisible anchor element to trigger the download
+    const downloadLink = document.createElement('a');
+    downloadLink.href = dataURL;
+    downloadLink.download = 'collage.jpeg';  // File name for the downloaded image
+
+    // Programmatically click the anchor to trigger the download
+    downloadLink.click();
 });
