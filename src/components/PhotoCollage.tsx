@@ -8,7 +8,7 @@ const PhotoCollage = () => {
     const [customHeight, setCustomHeight] = useState<number | string>(''); // Allow empty input initially
     const [horizontalSpace, setHorizontalSpace] = useState<number>(0);
     const [verticalSpace, setVerticalSpace] = useState<number>(0);
-    const [backgroundColor, setBackgroundColor] = useState('#FFFFFF'); // Default white background
+    const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF'); // Default white background
     const [paperSize, setPaperSize] = useState('4x6'); // Default page size
     // DPI conversion factor (300 DPI)
     const MM_TO_PX = 11.811;
@@ -46,10 +46,6 @@ const PhotoCollage = () => {
             }
             const { width: paperWidth, height: paperHeight } = pageSizes[paperSize];
 
-            // Fill canvas background color
-            ctx.fillStyle = backgroundColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             // Convert image dimensions from physical units
             const imageWidthPX = 50.8 * MM_TO_PX;
             const imageHeightPX = 50.8 * MM_TO_PX;
@@ -79,14 +75,55 @@ const PhotoCollage = () => {
     };
 
     const downloadCollage = () => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-            const link = document.createElement('a');
-            link.download = 'collage.jpeg';
-            link.href = canvas.toDataURL('image/jpeg', 1.0);
-            link.click();
-        }
+        const link = document.createElement('a');
+        link.download = 'collage.jpeg';
+        link.href = canvasToImage(backgroundColor)
+        link.click();
     };
+
+    function canvasToImage(backgroundColor: string): string {
+        // From https://www.mikechambers.com/blog/post/2011-01-31-setting-the-background-color-when-generating-images-from-canvas-todataurl/
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext("2d")
+        if (!canvas || !context){
+            return ""
+        }
+        //cache height and width
+        const w = canvas.width;
+        const h = canvas.height;
+
+        let data;
+
+        //get the current ImageData for the canvas.
+        data = context.getImageData(0, 0, w, h);
+
+        //store the current globalCompositeOperation
+        const compositeOperation = context.globalCompositeOperation;
+
+        //set to draw behind current content
+        context.globalCompositeOperation = "destination-over";
+
+        //set background color
+        context.fillStyle = backgroundColor;
+
+        //draw background / rect on entire canvas
+        context.fillRect(0, 0, w, h);
+
+        //get the image data from the canvas
+        const imageData = canvas.toDataURL("image/jpeg");
+
+        //clear the canvas
+        context.clearRect(0, 0, w, h);
+
+        //restore it with original / cached ImageData
+        context.putImageData(data, 0, 0);
+
+        //reset the globalCompositeOperation to what it was
+        context.globalCompositeOperation = compositeOperation;
+
+        //return the Base64 encoded data url string
+        return imageData;
+    }
 
     return (
         <div className="p-4">
@@ -163,7 +200,10 @@ const PhotoCollage = () => {
                     <input
                         type="color"
                         value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        onChange={(e) => {
+                            console.log(e.target.value)
+                            setBackgroundColor(e.target.value)
+                        }}
                         className="ml-2 border rounded"
                     />
                 </label>
@@ -177,10 +217,13 @@ const PhotoCollage = () => {
                         height="500"
                         aria-label="Collage Canvas"
                         className="border"
+                        style={{
+                            backgroundColor: backgroundColor
+                        }}
                     ></canvas>
                     <div className="mt-2">
                         <button data-testid={"generate-collage"} onClick={generateCollage} className="bg-blue-500 text-white p-2 rounded">Generate Collage</button>
-                        <button onClick={downloadCollage} className="bg-green-500 text-white p-2 ml-2 rounded">Download Collage</button>
+                        <button onClick={downloadCollage} className="bg-green-500 text-white p-2 ml-2 rounded">Save and Download Collage</button>
                     </div>
                 </div>
             )}
