@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/passport-photo/static/css/main.b29782fe.css",
+    "main.js": "/passport-photo/static/js/main.afb23dff.js",
+    "static/js/453.72aea34b.chunk.js": "/passport-photo/static/js/453.72aea34b.chunk.js",
+    "index.html": "/passport-photo/index.html",
+    "main.b29782fe.css.map": "/passport-photo/static/css/main.b29782fe.css.map",
+    "main.afb23dff.js.map": "/passport-photo/static/js/main.afb23dff.js.map",
+    "453.72aea34b.chunk.js.map": "/passport-photo/static/js/453.72aea34b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b29782fe.css",
+    "static/js/main.afb23dff.js"
+  ]
+}
