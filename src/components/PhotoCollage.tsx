@@ -67,7 +67,9 @@ const PhotoCollage = () => {
                 for (let col = 0; col < cols; col++) {
                     const x = col * (imageWidthPX + horizontalSpacePX);
                     const y = row * (imageHeightPX + verticalSpacePX);
-                    ctx.drawImage(uploadedImage, x, y, imageWidthPX, imageHeightPX);
+                    if (ctx) {
+                        ctx.drawImage(uploadedImage, x, y, imageWidthPX, imageHeightPX);
+                    }
                 }
             }
         }
