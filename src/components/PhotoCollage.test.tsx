@@ -1,14 +1,7 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import PhotoCollage from './PhotoCollage';
 
-
-
-
-<<<<<<< Updated upstream
-test('allows users to upload an image', async () => {
-=======
 xtest('allows users to upload an image', async () => {
->>>>>>> Stashed changes
     render(<PhotoCollage />);
     const a = await fetch("./public/logo192.png")
     const file = new File([await a.blob()], 'example.png', { type: 'image/png' });
@@ -21,11 +14,8 @@ xtest('allows users to upload an image', async () => {
     // expect(canvasElement).toBeInTheDocument();
 });
 
-<<<<<<< Updated upstream
-test('allows users to set custom sizes and spaces', async () => {
-=======
+
 xtest('allows users to set custom sizes and spaces', async () => {
->>>>>>> Stashed changes
     render(<PhotoCollage />);
 
     const widthInput = screen.getByLabelText(/custom width/i);
