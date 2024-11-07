@@ -42,10 +42,6 @@ const PhotoCollage = () => {
             const ctx = canvas.getContext('2d');
             if (!ctx){
                 console.error("Error initializing tool")
-<<<<<<< Updated upstream
-                throw "Error initializing tool"
-=======
->>>>>>> Stashed changes
             }
             const { width: paperWidth, height: paperHeight } = pageSizes[paperSize];
 
